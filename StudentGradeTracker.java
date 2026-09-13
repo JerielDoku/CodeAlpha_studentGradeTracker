@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Scanner;
+
 // Student class to hold student information.
 class Student {
     private String name;
@@ -37,12 +38,12 @@ class Student {
         return "F";
     }
 }
-// Main class to manage student grade tracking.
+// Main class to manage student grade tracking using arraylist.
 public class studentGradeTracker{
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         ArrayList<Student> students = new ArrayList<>();
-
+        
         while (true) {
             System.out.println("WELCOME TO THE STUDENT GRADE TRACKER");
             System.out.println("1. Add Student");
@@ -51,7 +52,8 @@ public class studentGradeTracker{
             System.out.println("4. Delete Student Record");
             System.out.println("5. Exit Program");
             System.out.print("Select an option (1-5): ");
-
+            
+            // For reading users choice and handling of invalid input.
             int choice = readInt(scanner);
 
             switch (choice) {
@@ -60,7 +62,7 @@ public class studentGradeTracker{
                     break;
                 case 2:
                     if (students.isEmpty()) {
-                        System.out.println("\nNo records found. Add students first.");
+                        System.out.println("\n No records found. Add students first.");
                     } else {
                         promptSortAndDisplay(scanner, students);
                     }
@@ -104,7 +106,7 @@ public class studentGradeTracker{
         students.add(student);
         System.out.println("Successfully added " + name + " | Score: " + score + " | Grade: " + student.getLetterGrade());
     }
-// Method to update an existing student's score.
+    // Method to update an existing student's score.
     private static void updateStudent(Scanner scanner, ArrayList<Student> students) {
         if (students.isEmpty()) {
             System.out.println("\n No student records available to update.");
@@ -126,7 +128,7 @@ public class studentGradeTracker{
             System.out.println("Invalid selection.");
         }
     }
-// Method to delete a student record.
+        // Method to delete a student record.
     private static void deleteStudent(Scanner scanner, ArrayList<Student> students) {
         if (students.isEmpty()) {
             System.out.println("\nNo student records available to delete.");
@@ -145,14 +147,14 @@ public class studentGradeTracker{
             System.out.println("Invalid selection.");
         }
     }
-// Method to display a quick list of students with their scores and grades.
+        // Method to display a quick list of students with their scores and grades.
     private static void displayQuickList(ArrayList<Student> students) {
         for (int i = 0; i < students.size(); i++) {
             System.out.printf("%d. %-20s | Score: %.2f (%s)%n", 
                     (i + 1), students.get(i).getName(), students.get(i).getScore(), students.get(i).getLetterGrade());
         }
     }
-// Method to read a valid score from the user, ensuring it's between 0 and 100.
+        // Method to read a valid score from the user, ensuring it's between 0 and 100.
     private static double readValidScore(Scanner scanner) {
         while (true) {
             System.out.print("Enter score (0 - 100): ");
