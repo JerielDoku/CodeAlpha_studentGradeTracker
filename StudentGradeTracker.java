@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Scanner;
-
+// Student class to hold student information.
 class Student {
     private String name;
     private double score;
@@ -27,7 +27,7 @@ class Student {
     public void setScore(double score) {
         this.score = score;
     }
-
+// Method to determine letter grade based on score.
     public String getLetterGrade() {
         if (score >= 80) return "A";
         if (score >= 70) return "B";
@@ -37,8 +37,8 @@ class Student {
         return "F";
     }
 }
-
-public class StudentGradeTracker{
+// Main class to manage student grade tracking.
+public class studentGradeTracker{
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         ArrayList<Student> students = new ArrayList<>();
@@ -88,6 +88,7 @@ public class StudentGradeTracker{
         }
     }
 
+    // Method to add a new student.
     private static void addStudent(Scanner scanner, ArrayList<Student> students) {
         System.out.println("\nADD STUDENT ");
         System.out.print("Enter student name: ");
@@ -103,7 +104,7 @@ public class StudentGradeTracker{
         students.add(student);
         System.out.println("Successfully added " + name + " | Score: " + score + " | Grade: " + student.getLetterGrade());
     }
-
+// Method to update an existing student's score.
     private static void updateStudent(Scanner scanner, ArrayList<Student> students) {
         if (students.isEmpty()) {
             System.out.println("\n No student records available to update.");
@@ -125,14 +126,14 @@ public class StudentGradeTracker{
             System.out.println("Invalid selection.");
         }
     }
-
+// Method to delete a student record.
     private static void deleteStudent(Scanner scanner, ArrayList<Student> students) {
         if (students.isEmpty()) {
             System.out.println("\nNo student records available to delete.");
             return;
         }
 
-        System.out.println("\n--- DELETE STUDENT RECORD ---");
+        System.out.println("\n DELETE STUDENT RECORD ");
         displayQuickList(students);
         System.out.print("Enter the number of the student to delete: ");
         int index = readInt(scanner) - 1;
@@ -144,14 +145,14 @@ public class StudentGradeTracker{
             System.out.println("Invalid selection.");
         }
     }
-
+// Method to display a quick list of students with their scores and grades.
     private static void displayQuickList(ArrayList<Student> students) {
         for (int i = 0; i < students.size(); i++) {
             System.out.printf("%d. %-20s | Score: %.2f (%s)%n", 
                     (i + 1), students.get(i).getName(), students.get(i).getScore(), students.get(i).getLetterGrade());
         }
     }
-
+// Method to read a valid score from the user, ensuring it's between 0 and 100.
     private static double readValidScore(Scanner scanner) {
         while (true) {
             System.out.print("Enter score (0 - 100): ");
@@ -167,7 +168,7 @@ public class StudentGradeTracker{
             System.out.println("Invalid entry! Score must be a number between 0 and 100.");
         }
     }
-
+// Method to read an integer from the user, returning -1 for invalid input. 
     private static int readInt(Scanner scanner) {
         if (scanner.hasNextInt()) {
             int val = scanner.nextInt();
@@ -177,7 +178,7 @@ public class StudentGradeTracker{
         scanner.nextLine();
         return -1;
     }
-
+// Method to prompt the user for sorting options and display the summary report accordingly.            
     private static void promptSortAndDisplay(Scanner scanner, ArrayList<Student> students) {
         System.out.println("\n Choose sort order for report:");
         System.out.println("1. By Highest Score (Descending)");
@@ -200,7 +201,7 @@ public class StudentGradeTracker{
 
         displaySummaryReport(students);
     }
-
+// Method to display the summary report of all students, including total, average, highest, lowest, and grade distribution.
     private static void displaySummaryReport(ArrayList<Student> students) {
         double total = 0;
         Student highestStudent = students.get(0);
@@ -225,14 +226,14 @@ public class StudentGradeTracker{
         }
 
         double average = total / students.size();
-
+// Display summary report header
         System.out.println("SUMMARY REPORT OF ALL STUDENTS");
         System.out.printf("%-20s | %-10s | %-6s%n", "Student Name", "Score", "Grade");
 
         for (Student s : students) {
             System.out.printf("%-20s | %-10.2f | %-6s%n", s.getName(), s.getScore(), s.getLetterGrade());
         }
-
+// Display overall statistics
         System.out.printf("Total Students : %d%n", students.size());
         System.out.printf("Class Average  : %.2f%n", average);
         System.out.printf("Highest Score  : %.2f (%s) - Grade %s%n", 
@@ -240,7 +241,7 @@ public class StudentGradeTracker{
         System.out.printf("Lowest Score   : %.2f (%s) - Grade %s%n", 
                 lowestStudent.getScore(), lowestStudent.getName(), lowestStudent.getLetterGrade());
 
-     
+     // Display grade distribution
         System.out.println("GRADE DISTRIBUTION");
         char[] gradeLabels = {'A', 'B', 'C', 'D', 'E', 'F'};
         for (int i = 0; i < gradeCounts.length; i++) {
