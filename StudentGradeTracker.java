@@ -44,7 +44,7 @@ public class StudentGradeTracker{
         ArrayList<Student> students = new ArrayList<>();
 
         while (true) {
-            System.out.println("STUDENT GRADE MANAGER (ArrayList)");
+            System.out.println("WELCOME TO THE STUDENT GRADE TRACKER");
             System.out.println("1. Add Student");
             System.out.println("2. Display Summary Report of All Students");
             System.out.println("3. Update Student Score");
