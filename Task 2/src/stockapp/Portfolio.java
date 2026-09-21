@@ -1,110 +1,101 @@
-// Portfolio class representing a user's stock portfolio
+//User-defined class representing a stock portfolio, allowing users to buy/sell stocks, view holdings, and track transaction history.
+
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-// Portfolio class representing a user's stock portfolio
 public class Portfolio implements Serializable {
+    // serialVersionUID for serialization compatibility
     private static final long serialVersionUID = 1L;
-// Maps to track stock holdings, cost basis, and transaction history
-    private Map<String, Integer> holdings = new HashMap<>();
-    private Map<String, Double> costBasis = new HashMap<>();
-    private List<Transaction> transactions = new ArrayList<>();
+// Portfolio attributes: cash balance, holdings (map of stock symbols to quantities), and transaction history
+    private double cashBalance;
+    private Map<String, Integer> holdings; // Symbol -> Quantity
+    private List<Transaction> history;
+// Constructor to initialize a new portfolio with an initial cash balance
+    public Portfolio(double initialBalance) {
+        this.cashBalance = initialBalance;
+        this.holdings = new HashMap<>();
+        this.history = new ArrayList<>();
+    }
 
-    public boolean buyStock(Stock stock, int quantity, User user) {
-        double totalCost = stock.getPrice() * quantity;
-        if (user.getBalance() < totalCost) {
-            System.out.printf("Error: Insufficient cash balance! Required: $%.2f, Available: $%.2f%n",
-                    totalCost, user.getBalance());
+    public boolean buyStock(Stock stock, int quantity) {
+        if (quantity <= 0) {
+            System.out.println("[Error] Quantity must be greater than 0.");
             return false;
         }
 
-        user.deductBalance(totalCost);
+        double totalCost = stock.getCurrentPrice() * quantity;
+        if (totalCost > cashBalance) {
+            System.out.printf("[Error] Insufficient funds. Required: $%.2f | Available: $%.2f\n", totalCost, cashBalance);
+            return false;
+        }
+
+        cashBalance -= totalCost;
         holdings.put(stock.getSymbol(), holdings.getOrDefault(stock.getSymbol(), 0) + quantity);
-        costBasis.put(stock.getSymbol(), costBasis.getOrDefault(stock.getSymbol(), 0.0) + totalCost);
 
-        transactions.add(new Transaction(stock.getSymbol(), quantity, stock.getPrice(), "BUY"));
-        System.out.printf("Successfully bought %d shares of %s for $%.2f%n", quantity, stock.getSymbol(), totalCost);
+        Transaction tx = new Transaction(stock.getSymbol(), quantity, stock.getCurrentPrice(), "BUY");
+        history.add(tx);
+
+        System.out.printf("[Success] Purchased %d shares of %s for $%.2f\n", quantity, stock.getSymbol(), totalCost);
         return true;
     }
-// Method to sell stocks from the portfolio, updating holdings, cost basis, and user balance
-    public boolean sellStock(Stock stock, int quantity, User user) {
-        String symbol = stock.getSymbol();
-        int currentQty = holdings.getOrDefault(symbol, 0);
 
-        if (currentQty < quantity) {
-            System.out.println("Error: You do not own enough shares to complete this sale!");
+    public boolean sellStock(Stock stock, int quantity) {
+        if (quantity <= 0) {
+            System.out.println("[Error] Quantity must be greater than 0.");
             return false;
         }
 
-        double totalRevenue = stock.getPrice() * quantity;
-        user.addBalance(totalRevenue);
-
-        double avgCostPerShare = costBasis.get(symbol) / currentQty;
-        costBasis.put(symbol, costBasis.get(symbol) - (avgCostPerShare * quantity));
-
-        int newQty = currentQty - quantity;
-        if (newQty == 0) {
-            holdings.remove(symbol);
-            costBasis.remove(symbol);
-        } else {
-            holdings.put(symbol, newQty);
+        int currentHolding = holdings.getOrDefault(stock.getSymbol(), 0);
+        if (quantity > currentHolding) {
+            System.out.printf("[Error] You only own %d shares of %s.\n", currentHolding, stock.getSymbol());
+            return false;
         }
 
-        transactions.add(new Transaction(symbol, quantity, stock.getPrice(), "SELL"));
-        System.out.printf("Successfully sold %d shares of %s for $%.2f%n", quantity, symbol, totalRevenue);
+        double totalRevenue = stock.getCurrentPrice() * quantity;
+        cashBalance += totalRevenue;
+
+        if (currentHolding == quantity) {
+            holdings.remove(stock.getSymbol());
+        } else {
+            holdings.put(stock.getSymbol(), currentHolding - quantity);
+        }
+
+        Transaction tx = new Transaction(stock.getSymbol(), quantity, stock.getCurrentPrice(), "SELL");
+        history.add(tx);
+
+        System.out.printf("[Success] Sold %d shares of %s for $%.2f\n", quantity, stock.getSymbol(), totalRevenue);
         return true;
     }
-// Method to display the portfolio's performance, including current market value and profit/loss
-    public void displayPerformance(Market market, double userBalance) {
-        System.out.println("\nPORTFOLIO PERFORMANCE");
-        System.out.printf("Available Cash Balance: $%.2f%n", userBalance);
-
+// Method to display the current portfolio, including cash balance, stock holdings, and their market values
+    public void displayPortfolio(Market market) {
+        System.out.println("\nYOUR PORTFOLIO");
+        System.out.printf("Cash Balance: $%.2f\n", cashBalance);
+       
         if (holdings.isEmpty()) {
-            System.out.println("No open stock positions.");
-            return;
-        }
-
-        double totalMarketValue = 0.0;
-        double totalInvested = 0.0;
-
-        System.out.printf("%-8s | %-6s | %-12s | %-12s | %-12s%n", "Symbol", "Qty", "Cost Basis", "Current Val", "P&L ($)");
-
-        for (Map.Entry<String, Integer> entry : holdings.entrySet()) {
-            String symbol = entry.getKey();
-            int qty = entry.getValue();
-            Stock stock = market.getStock(symbol);
-
-            double currentPrice = (stock != null) ? stock.getPrice() : 0.0;
-            double currentValue = currentPrice * qty;
-            double invested = costBasis.getOrDefault(symbol, 0.0);
-            double pnl = currentValue - invested;
-
-            totalMarketValue += currentValue;
-            totalInvested += invested;
-
-            System.out.printf("%-8s | %-6d | $%-11.2f | $%-11.2f | %s$%-11.2f%n",
-                    symbol, qty, invested, currentValue, (pnl >= 0 ? "+" : ""), pnl);
-        }
-
-        double totalPnL = totalMarketValue - totalInvested;
-        double pnlPercentage = totalInvested > 0 ? (totalPnL / totalInvested) * 100 : 0.0;
-
-        System.out.printf("Stock Holdings Value: $%.2f%n", totalMarketValue);
-        System.out.printf("Net Total Net Worth : $%.2f%n", totalMarketValue + userBalance);
-        System.out.printf("Total Un-realized P&L: %s$%.2f (%.2f%%)%n", (totalPnL >= 0 ? "+" : ""), totalPnL, pnlPercentage);
-    }
-// Method to display the transaction history of the portfolio
-    public void displayTransactions() {
-        System.out.println("\nTRANSACTION HISTORY");
-        if (transactions.isEmpty()) {
-            System.out.println("No transaction history recorded.");
+            System.out.println("No stock holdings.");
         } else {
-            for (Transaction t : transactions) {
-                System.out.println(t);
+            double totalPortfolioValue = cashBalance;
+            System.out.printf("%-8s %-10s %-14s %-14s\n", "Symbol", "Shares", "Current Price", "Market Value");
+            for (Map.Entry<String, Integer> entry : holdings.entrySet()) {
+                Stock stock = market.getStock(entry.getKey());
+                double value = stock.getCurrentPrice() * entry.getValue();
+                totalPortfolioValue += value;
+                System.out.printf("%-8s %-10d $%-13.2f $%-13.2f\n", entry.getKey(), entry.getValue(), stock.getCurrentPrice(), value);
+            }
+            System.out.printf("Total Portfolio Value: $%.2f\n", totalPortfolioValue);
+        }
+  }
+//for displaying the transaction history, including all buy/sell transactions with details like stock symbol, quantity, price per share, and timestamp
+    public void displayTransactionHistory() {
+        System.out.println("\nTRANSACTION HISTORY");
+        if (history.isEmpty()) {
+            System.out.println("No transactions recorded.");
+        } else {
+            for (Transaction tx : history) {
+                System.out.println(tx);
             }
         }
-    }
+        }
+
+    public double getCashBalance() { return cashBalance; }
 }
