@@ -29,38 +29,98 @@ class Student {
     }
 
     public String getLetterGrade() {
-        if (score >= 80) return "A";
-        if (score >= 70) return "B";
-        if (score >= 60) return "C";
-        if (score >= 50) return "D";
-        if (score >= 40) return "E";
+        if (score >= 90) return "A";
+        if (score >= 80) return "B";
+        if (score >= 70) return "C";
+        if (score >= 60) return "D";
+        if (score >= 50) return "E";
         return "F";
     }
 }
 
-public class studentGradeTracker {
+public class StudentGradeTracker {
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        boolean keepRunning = true;
+
+        while (keepRunning) {
+            System.out.println("     STUDENT GRADE TRACKER");
+            System.out.println("1. Quick Batch Entry & Report Generation");
+            System.out.println("2. Interactive Management Menu");
+            System.out.println("3. Exit");
+            System.out.print("Select mode (1-3): ");
+
+            int mode = readInt(scanner);
+
+            switch (mode) {
+                case 1:
+                    runVideoStyleBatchEntry(scanner);
+                    break;
+                case 2:
+                    runInteractiveMenu(scanner);
+                    break;
+                case 3:
+                    keepRunning = false;
+                    System.out.println("\nExiting program. Goodbye!");
+                    break;
+                default:
+                    System.out.println("Invalid option! Select 1, 2, or 3.");
+            }
+        }
+        scanner.close();
+    }
+
+    // Video Workflow: Initialize size -> Sequential student prompts -> Immediate output report
+    private static void runVideoStyleBatchEntry(Scanner scanner) {
+        System.out.println("\n QUICK BATCH GRADE ENTRY");
+        System.out.print("Enter the number of students: ");
+        int numStudents = readInt(scanner);
+
+        while (numStudents <= 0) {
+            System.out.print("Please enter a valid positive number of students: ");
+            numStudents = readInt(scanner);
+        }
+
         ArrayList<Student> students = new ArrayList<>();
 
-        while (true) {
-            System.out.println("WELCOME TO STUDENT GRADE TRACKER BY JERIEL");
+        for (int i = 0; i < numStudents; i++) {
+            System.out.print("\nEnter the name of student " + (i + 1) + ": ");
+            String name = scanner.nextLine().trim();
+            while (name.isEmpty()) {
+                System.out.print("Name cannot be empty. Enter name of student " + (i + 1) + ": ");
+                name = scanner.nextLine().trim();
+            }
+
+            double score = readValidScore(scanner);
+            students.add(new Student(name, score));
+        }
+
+        promptReportOptionsAndDisplay(scanner, students);
+    }
+
+    private static void runInteractiveMenu(Scanner scanner) {
+        ArrayList<Student> students = new ArrayList<>();
+        boolean inMenu = true;
+
+        while (inMenu) {
+            System.out.println("\n INTERACTIVE MENU");
             System.out.println("1. Add Student");
-            System.out.println("2. Display Summary Report of All Students");
+            System.out.println("2. Display Summary Report");
             System.out.println("3. Update Student Score");
             System.out.println("4. Delete Student Record");
-            System.out.println("5. Exit Program");
+            System.out.println("5. Return to Main Menu");
             System.out.print("Select an option (1-5): ");
 
             int choice = readInt(scanner);
 
             switch (choice) {
                 case 1:
-                    addStudent(scanner, students);
+                    addSingleStudent(scanner, students);
                     break;
                 case 2:
                     if (students.isEmpty()) {
-                        System.out.println("\nNo records found. Add students first.");
+                        System.out.println("\nNo student records found. Add students first.");
                     } else {
                         promptReportOptionsAndDisplay(scanner, students);
                     }
@@ -72,80 +132,66 @@ public class studentGradeTracker {
                     deleteStudent(scanner, students);
                     break;
                 case 5:
-                    if (!students.isEmpty()) {
-                        System.out.print("\nWould you like to display the summary report before exiting? (Y/N): ");
-                        String response = scanner.nextLine().trim();
-                        if (response.equalsIgnoreCase("Y")) {
-                            promptReportOptionsAndDisplay(scanner, students);
-                        }
-                    }
-                    System.out.println("\nExiting program. Goodbye!");
-                    scanner.close();
-                    return;
+                    inMenu = false;
+                    break;
                 default:
-                    System.out.println("\nInvalid option! Please enter a number between 1 and 5.");
+                    System.out.println("Invalid choice. Enter 1-5.");
             }
         }
     }
 
-    private static void addStudent(Scanner scanner, ArrayList<Student> students) {
-        System.out.println("\nADD STUDENT");
-        System.out.print("Enter student name: ");
+    private static void addSingleStudent(Scanner scanner, ArrayList<Student> students) {
+        System.out.print("\nEnter student name: ");
         String name = scanner.nextLine().trim();
-
         if (name.isEmpty()) {
             System.out.println("Name cannot be empty.");
             return;
         }
-
         double score = readValidScore(scanner);
         Student student = new Student(name, score);
         students.add(student);
-        System.out.println("Successfully added " + name + " | Score: " + score + " | Grade: " + student.getLetterGrade());
+        System.out.println("Added: " + name + " | Score: " + score + " | Grade: " + student.getLetterGrade());
     }
 
     private static void updateStudent(Scanner scanner, ArrayList<Student> students) {
         if (students.isEmpty()) {
-            System.out.println("\nNo student records available to update.");
+            System.out.println("No records to update.");
             return;
         }
-
-        System.out.println("\nUPDATE STUDENT SCORE");
         displayQuickList(students);
-        System.out.print("Enter the number of the student to update: ");
+        System.out.print("Select student number to update: ");
         int index = readInt(scanner) - 1;
 
         if (index >= 0 && index < students.size()) {
-            Student student = students.get(index);
-            System.out.println("Current entry: " + student.getName() + " - Score: " + student.getScore());
+            Student s = students.get(index);
+            System.out.println("Selected: " + s.getName() + " (Current Score: " + s.getScore() + ")");
             double newScore = readValidScore(scanner);
-            student.setScore(newScore);
-            System.out.println("Updated " + student.getName() + "'s score to " + newScore + " (" + student.getLetterGrade() + ")");
+            s.setScore(newScore);
+            System.out.println("Updated " + s.getName() + "'s score to " + newScore + " (" + s.getLetterGrade() + ")");
         } else {
-            System.out.println("Invalid selection.");
+            System.out.println("Invalid student number.");
         }
     }
 
     private static void deleteStudent(Scanner scanner, ArrayList<Student> students) {
         if (students.isEmpty()) {
-            System.out.println("\nNo student records available to delete.");
+            System.out.println("No records to delete.");
             return;
         }
-
-        System.out.println("\nDELETE STUDENT RECORD");
         displayQuickList(students);
-        System.out.print("Enter the number of the student to delete: ");
+        System.out.print("Select student number to delete: ");
         int index = readInt(scanner) - 1;
 
         if (index >= 0 && index < students.size()) {
             Student removed = students.remove(index);
-            System.out.println("Successfully removed record for " + removed.getName());
+            System.out.println("Removed record for " + removed.getName());
         } else {
-            System.out.println("Invalid selection.");
+            System.out.println("Invalid student number.");
         }
     }
 
     private static void displayQuickList(ArrayList<Student> students) {
+        System.out.println("\n CURRENT ROSTER");
         for (int i = 0; i < students.size(); i++) {
             System.out.printf("%d. %-20s | Score: %.2f (%s)%n", 
                     (i + 1), students.get(i).getName(), students.get(i).getScore(), students.get(i).getLetterGrade());
@@ -157,12 +203,12 @@ public class studentGradeTracker {
             System.out.print("Enter score (0 - 100): ");
             if (scanner.hasNextDouble()) {
                 double score = scanner.nextDouble();
-                scanner.nextLine();
+                scanner.nextLine(); // Clear buffer newline
                 if (score >= 0 && score <= 100) {
                     return score;
                 }
             } else {
-                scanner.nextLine();
+                scanner.nextLine(); // Clear invalid input
             }
             System.out.println("Invalid entry! Score must be a number between 0 and 100.");
         }
@@ -171,20 +217,18 @@ public class studentGradeTracker {
     private static int readInt(Scanner scanner) {
         if (scanner.hasNextInt()) {
             int val = scanner.nextInt();
-            scanner.nextLine();
+            scanner.nextLine(); // Clear buffer newline
             return val;
         }
-        scanner.nextLine();
+        scanner.nextLine(); // Clear invalid input
         return -1;
     }
 
     private static void promptReportOptionsAndDisplay(Scanner scanner, ArrayList<Student> students) {
-        // Option to calculate/include Average
         System.out.print("\nCalculate and include class average score in the report? (Y/N): ");
         String avgChoice = scanner.nextLine().trim();
         boolean includeAverage = avgChoice.equalsIgnoreCase("Y");
 
-        // Option for sorting order
         System.out.println("\nChoose sort order for report:");
         System.out.println("1. By Highest Score (Descending)");
         System.out.println("2. Alphabetically by Name (A-Z)");
@@ -230,9 +274,7 @@ public class studentGradeTracker {
             }
         }
 
-        System.out.println("\n==========================================");
-        System.out.println("        SUMMARY REPORT OF ALL STUDENTS");
-        System.out.println("==========================================");
+        System.out.println("        STUDENT PERFORMANCE REPORT        ");
         System.out.printf("%-20s | %-10s | %-6s%n", "Student Name", "Score", "Grade");
         System.out.println("------------------------------------------");
 
@@ -243,7 +285,6 @@ public class studentGradeTracker {
         System.out.println("------------------------------------------");
         System.out.printf("Total Students : %d%n", students.size());
 
-        // Conditional calculation and rendering of average
         if (includeAverage) {
             double average = total / students.size();
             System.out.printf("Class Average  : %.2f%n", average);
@@ -251,20 +292,16 @@ public class studentGradeTracker {
             System.out.println("Class Average  : [Omitted by user choice]");
         }
 
-        // Always display highest and lowest scores with student names
         System.out.printf("Highest Score  : %.2f (%s) - Grade %s%n", 
                 highestStudent.getScore(), highestStudent.getName(), highestStudent.getLetterGrade());
         System.out.printf("Lowest Score   : %.2f (%s) - Grade %s%n", 
                 lowestStudent.getScore(), lowestStudent.getName(), lowestStudent.getLetterGrade());
 
-        System.out.println("\n------------------------------------------");
-        System.out.println("           GRADE DISTRIBUTION");
-        System.out.println("------------------------------------------");
+        System.out.println("           GRADE DISTRIBUTION             ");
         char[] gradeLabels = {'A', 'B', 'C', 'D', 'E', 'F'};
         for (int i = 0; i < gradeCounts.length; i++) {
             double percentage = ((double) gradeCounts[i] / students.size()) * 100;
             System.out.printf("Grade %c : %2d student(s)  (%.1f%%)%n", gradeLabels[i], gradeCounts[i], percentage);
         }
-        System.out.println("==========================================");
     }
 }
