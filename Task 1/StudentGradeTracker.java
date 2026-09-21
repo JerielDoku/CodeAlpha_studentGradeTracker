@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Scanner;
-
+ //
 class Student {
     private String name;
     private double score;
@@ -71,7 +71,6 @@ public class StudentGradeTracker {
         scanner.close();
     }
 
-    // Video Workflow: Initialize size -> Sequential student prompts -> Immediate output report
     private static void runVideoStyleBatchEntry(Scanner scanner) {
         System.out.println("\n QUICK BATCH GRADE ENTRY");
         System.out.print("Enter the number of students: ");
@@ -203,12 +202,12 @@ public class StudentGradeTracker {
             System.out.print("Enter score (0 - 100): ");
             if (scanner.hasNextDouble()) {
                 double score = scanner.nextDouble();
-                scanner.nextLine(); // Clear buffer newline
+                scanner.nextLine(); 
                 if (score >= 0 && score <= 100) {
                     return score;
                 }
             } else {
-                scanner.nextLine(); // Clear invalid input
+                scanner.nextLine(); 
             }
             System.out.println("Invalid entry! Score must be a number between 0 and 100.");
         }
@@ -217,10 +216,10 @@ public class StudentGradeTracker {
     private static int readInt(Scanner scanner) {
         if (scanner.hasNextInt()) {
             int val = scanner.nextInt();
-            scanner.nextLine(); // Clear buffer newline
+            scanner.nextLine(); 
             return val;
         }
-        scanner.nextLine(); // Clear invalid input
+        scanner.nextLine();
         return -1;
     }
 
@@ -274,15 +273,12 @@ public class StudentGradeTracker {
             }
         }
 
-        System.out.println("        STUDENT PERFORMANCE REPORT        ");
+        System.out.println("STUDENT PERFORMANCE REPORT");
         System.out.printf("%-20s | %-10s | %-6s%n", "Student Name", "Score", "Grade");
-        System.out.println("------------------------------------------");
 
         for (Student s : students) {
             System.out.printf("%-20s | %-10.2f | %-6s%n", s.getName(), s.getScore(), s.getLetterGrade());
         }
-
-        System.out.println("------------------------------------------");
         System.out.printf("Total Students : %d%n", students.size());
 
         if (includeAverage) {
@@ -297,7 +293,7 @@ public class StudentGradeTracker {
         System.out.printf("Lowest Score   : %.2f (%s) - Grade %s%n", 
                 lowestStudent.getScore(), lowestStudent.getName(), lowestStudent.getLetterGrade());
 
-        System.out.println("           GRADE DISTRIBUTION             ");
+        System.out.println("GRADE DISTRIBUTION");
         char[] gradeLabels = {'A', 'B', 'C', 'D', 'E', 'F'};
         for (int i = 0; i < gradeCounts.length; i++) {
             double percentage = ((double) gradeCounts[i] / students.size()) * 100;
