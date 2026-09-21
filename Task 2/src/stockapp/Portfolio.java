@@ -1,13 +1,14 @@
-
+// Portfolio class representing a user's stock portfolio
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// Portfolio class representing a user's stock portfolio
 public class Portfolio implements Serializable {
     private static final long serialVersionUID = 1L;
-
+// Maps to track stock holdings, cost basis, and transaction history
     private Map<String, Integer> holdings = new HashMap<>();
     private Map<String, Double> costBasis = new HashMap<>();
     private List<Transaction> transactions = new ArrayList<>();
@@ -28,7 +29,7 @@ public class Portfolio implements Serializable {
         System.out.printf("Successfully bought %d shares of %s for $%.2f%n", quantity, stock.getSymbol(), totalCost);
         return true;
     }
-
+// Method to sell stocks from the portfolio, updating holdings, cost basis, and user balance
     public boolean sellStock(Stock stock, int quantity, User user) {
         String symbol = stock.getSymbol();
         int currentQty = holdings.getOrDefault(symbol, 0);
@@ -56,15 +57,13 @@ public class Portfolio implements Serializable {
         System.out.printf("Successfully sold %d shares of %s for $%.2f%n", quantity, symbol, totalRevenue);
         return true;
     }
-
+// Method to display the portfolio's performance, including current market value and profit/loss
     public void displayPerformance(Market market, double userBalance) {
-        System.out.println("\n================ PORTFOLIO PERFORMANCE ================");
+        System.out.println("\nPORTFOLIO PERFORMANCE");
         System.out.printf("Available Cash Balance: $%.2f%n", userBalance);
-        System.out.println("-------------------------------------------------------");
 
         if (holdings.isEmpty()) {
             System.out.println("No open stock positions.");
-            System.out.println("=======================================================");
             return;
         }
 
@@ -72,7 +71,6 @@ public class Portfolio implements Serializable {
         double totalInvested = 0.0;
 
         System.out.printf("%-8s | %-6s | %-12s | %-12s | %-12s%n", "Symbol", "Qty", "Cost Basis", "Current Val", "P&L ($)");
-        System.out.println("-------------------------------------------------------");
 
         for (Map.Entry<String, Integer> entry : holdings.entrySet()) {
             String symbol = entry.getKey();
@@ -94,15 +92,13 @@ public class Portfolio implements Serializable {
         double totalPnL = totalMarketValue - totalInvested;
         double pnlPercentage = totalInvested > 0 ? (totalPnL / totalInvested) * 100 : 0.0;
 
-        System.out.println("-------------------------------------------------------");
         System.out.printf("Stock Holdings Value: $%.2f%n", totalMarketValue);
         System.out.printf("Net Total Net Worth : $%.2f%n", totalMarketValue + userBalance);
         System.out.printf("Total Un-realized P&L: %s$%.2f (%.2f%%)%n", (totalPnL >= 0 ? "+" : ""), totalPnL, pnlPercentage);
-        System.out.println("=======================================================");
     }
-
+// Method to display the transaction history of the portfolio
     public void displayTransactions() {
-        System.out.println("\n================ TRANSACTION HISTORY ================");
+        System.out.println("\nTRANSACTION HISTORY");
         if (transactions.isEmpty()) {
             System.out.println("No transaction history recorded.");
         } else {
@@ -110,6 +106,5 @@ public class Portfolio implements Serializable {
                 System.out.println(t);
             }
         }
-        System.out.println("=====================================================");
     }
 }

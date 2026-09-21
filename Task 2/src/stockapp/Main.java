@@ -1,9 +1,19 @@
+// Stock Trading Platform
+// Simulating a basic stock trading environment.
+// Users can view market data, buy/sell stocks, and track their portfolio performance.
+// Data persistence is implemented to save user data between sessions.
+//  OOP principles are applied with classes for User, Stock, Portfolio, and Market.
+// I/O operations are handled using serialization for saving and loading user data.
+
+
 import java.io.*;
 import java.util.Scanner;
-
+// class to run the stock trading application
 public class Main{
+    // file name for saving user data
     private static final String DATA_FILE = "user_data.dat";
 
+    // main method to start the application
     public static void main(String[] args) {
         Market market = new Market();
         Scanner scanner = new Scanner(System.in);
@@ -77,7 +87,7 @@ public class Main{
             }
         }
     }
-
+// method to save user data to a file using serialization
     private static void saveUserData(User user) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(DATA_FILE))) {
             oos.writeObject(user);
@@ -85,7 +95,7 @@ public class Main{
             System.out.println("Error saving user data: " + e.getMessage());
         }
     }
-
+// method to load user data from a file using deserialization
     private static User loadUserData() {
         File file = new File(DATA_FILE);
         if (!file.exists()) {

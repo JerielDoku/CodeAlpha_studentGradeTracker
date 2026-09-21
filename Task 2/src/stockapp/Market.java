@@ -1,3 +1,4 @@
+// File for representing a market with a collection of stocks and their prices.
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,12 +19,10 @@ public class Market {
     }
 
     public void displayMarket() {
-        System.out.println("\n================ MARKET PRICES ================");
+        System.out.println("\n MARKET PRICES");
         System.out.printf("%-10s | %-10s%n", "Symbol", "Price");
-        System.out.println("----------------------------------------------");
         for (Stock stock : stocks.values()) {
             System.out.printf("%-10s | $%-10.2f%n", stock.getSymbol(), stock.getPrice());
         }
-        System.out.println("==============================================");
     }
 }
