@@ -1,8 +1,13 @@
+//Student Grade Tracker
+//This program allows users to enter student names and scores, then generates a summary report with letter grades, class average, highest and lowest scores, and grade distribution.
+// This program  uses ArrayList to store student records and provides both a quick batch entry mode and an interactive management menu for adding, updating, and deleting student records.
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Scanner;
- //
+
+//class to represent a student with name and score
 class Student {
     private String name;
     private double score;
@@ -27,7 +32,7 @@ class Student {
     public void setScore(double score) {
         this.score = score;
     }
-
+//method to determine letter grade based on score
     public String getLetterGrade() {
         if (score >= 90) return "A";
         if (score >= 80) return "B";
@@ -37,7 +42,7 @@ class Student {
         return "F";
     }
 }
-
+//main class to manage student grade tracking
 public class StudentGradeTracker {
 
     public static void main(String[] args) {
@@ -45,7 +50,7 @@ public class StudentGradeTracker {
         boolean keepRunning = true;
 
         while (keepRunning) {
-            System.out.println("     STUDENT GRADE TRACKER");
+            System.out.println("STUDENT GRADE TRACKER");
             System.out.println("1. Quick Batch Entry & Report Generation");
             System.out.println("2. Interactive Management Menu");
             System.out.println("3. Exit");
@@ -70,7 +75,7 @@ public class StudentGradeTracker {
         }
         scanner.close();
     }
-
+    //method to handle quick batch entry of student records
     private static void runVideoStyleBatchEntry(Scanner scanner) {
         System.out.println("\n QUICK BATCH GRADE ENTRY");
         System.out.print("Enter the number of students: ");
@@ -97,7 +102,7 @@ public class StudentGradeTracker {
 
         promptReportOptionsAndDisplay(scanner, students);
     }
-
+    //method to handle interactive menu for managing student records
     private static void runInteractiveMenu(Scanner scanner) {
         ArrayList<Student> students = new ArrayList<>();
         boolean inMenu = true;
@@ -138,7 +143,7 @@ public class StudentGradeTracker {
             }
         }
     }
-
+//method to add a single student record
     private static void addSingleStudent(Scanner scanner, ArrayList<Student> students) {
         System.out.print("\nEnter student name: ");
         String name = scanner.nextLine().trim();
@@ -151,7 +156,7 @@ public class StudentGradeTracker {
         students.add(student);
         System.out.println("Added: " + name + " | Score: " + score + " | Grade: " + student.getLetterGrade());
     }
-
+//method to update an existing student's score
     private static void updateStudent(Scanner scanner, ArrayList<Student> students) {
         if (students.isEmpty()) {
             System.out.println("No records to update.");
@@ -171,7 +176,7 @@ public class StudentGradeTracker {
             System.out.println("Invalid student number.");
         }
     }
-
+//method to delete a student record
     private static void deleteStudent(Scanner scanner, ArrayList<Student> students) {
         if (students.isEmpty()) {
             System.out.println("No records to delete.");
@@ -188,7 +193,7 @@ public class StudentGradeTracker {
             System.out.println("Invalid student number.");
         }
     }
-
+//method to display a quick list of students with their scores and grades   
     private static void displayQuickList(ArrayList<Student> students) {
         System.out.println("\n CURRENT ROSTER");
         for (int i = 0; i < students.size(); i++) {
@@ -196,7 +201,7 @@ public class StudentGradeTracker {
                     (i + 1), students.get(i).getName(), students.get(i).getScore(), students.get(i).getLetterGrade());
         }
     }
-
+//method to read a valid score between 0 and 100 from user input
     private static double readValidScore(Scanner scanner) {
         while (true) {
             System.out.print("Enter score (0 - 100): ");
@@ -212,7 +217,7 @@ public class StudentGradeTracker {
             System.out.println("Invalid entry! Score must be a number between 0 and 100.");
         }
     }
-
+//method to read an integer from user input, returning -1 for invalid input
     private static int readInt(Scanner scanner) {
         if (scanner.hasNextInt()) {
             int val = scanner.nextInt();
@@ -222,7 +227,7 @@ public class StudentGradeTracker {
         scanner.nextLine();
         return -1;
     }
-
+//for the report generation, prompt user for options and display the summary report
     private static void promptReportOptionsAndDisplay(Scanner scanner, ArrayList<Student> students) {
         System.out.print("\nCalculate and include class average score in the report? (Y/N): ");
         String avgChoice = scanner.nextLine().trim();
@@ -249,7 +254,7 @@ public class StudentGradeTracker {
 
         displaySummaryReport(students, includeAverage);
     }
-
+//method to display the summary report with student details, class average, highest and lowest scores, and grade distribution
     private static void displaySummaryReport(ArrayList<Student> students, boolean includeAverage) {
         double total = 0;
         Student highestStudent = students.get(0);
